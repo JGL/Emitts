@@ -9,16 +9,28 @@
 /* Begin PBXBuildFile section */
 		D77499BC2A7027330004D8B0 /* EmittsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77499BB2A7027330004D8B0 /* EmittsApp.swift */; };
 		D77499BE2A7027330004D8B0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77499BD2A7027330004D8B0 /* ContentView.swift */; };
-		D77499C02A7027340004D8B0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D77499BF2A7027340004D8B0 /* Assets.xcassets */; };
 		D77499C32A7027340004D8B0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D77499C22A7027340004D8B0 /* Preview Assets.xcassets */; };
+		D77C72112A702DC100F56017 /* FingersOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77C72102A702DC100F56017 /* FingersOverlay.swift */; };
+		D77C72132A702F3200F56017 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D77C72122A702F3200F56017 /* LaunchScreen.storyboard */; };
+		D77C72192A70300300F56017 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77C72182A70300300F56017 /* CameraViewController.swift */; };
+		D77C721B2A70306E00F56017 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77C721A2A70306E00F56017 /* CameraPreview.swift */; };
+		D77C721D2A70309600F56017 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77C721C2A70309600F56017 /* CameraView.swift */; };
+		D77C721F2A7031D000F56017 /* Finger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77C721E2A7031D000F56017 /* Finger.swift */; };
+		D77C72212A70329B00F56017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D77C72202A70329B00F56017 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D77499B82A7027330004D8B0 /* Emitts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Emitts.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D77499BB2A7027330004D8B0 /* EmittsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmittsApp.swift; sourceTree = "<group>"; };
 		D77499BD2A7027330004D8B0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		D77499BF2A7027340004D8B0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D77499C22A7027340004D8B0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D77C72102A702DC100F56017 /* FingersOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersOverlay.swift; sourceTree = "<group>"; };
+		D77C72122A702F3200F56017 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		D77C72182A70300300F56017 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		D77C721A2A70306E00F56017 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
+		D77C721C2A70309600F56017 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		D77C721E2A7031D000F56017 /* Finger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Finger.swift; sourceTree = "<group>"; };
+		D77C72202A70329B00F56017 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +65,11 @@
 			children = (
 				D77499BB2A7027330004D8B0 /* EmittsApp.swift */,
 				D77499BD2A7027330004D8B0 /* ContentView.swift */,
-				D77499BF2A7027340004D8B0 /* Assets.xcassets */,
+				D77C72102A702DC100F56017 /* FingersOverlay.swift */,
+				D77C72162A702FBB00F56017 /* CameraView */,
+				D77C72172A702FC400F56017 /* HandPose */,
+				D77C72122A702F3200F56017 /* LaunchScreen.storyboard */,
+				D77C72202A70329B00F56017 /* Assets.xcassets */,
 				D77499C12A7027340004D8B0 /* Preview Content */,
 			);
 			path = Emitts;
@@ -65,6 +81,24 @@
 				D77499C22A7027340004D8B0 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		D77C72162A702FBB00F56017 /* CameraView */ = {
+			isa = PBXGroup;
+			children = (
+				D77C72182A70300300F56017 /* CameraViewController.swift */,
+				D77C721A2A70306E00F56017 /* CameraPreview.swift */,
+				D77C721C2A70309600F56017 /* CameraView.swift */,
+			);
+			path = CameraView;
+			sourceTree = "<group>";
+		};
+		D77C72172A702FC400F56017 /* HandPose */ = {
+			isa = PBXGroup;
+			children = (
+				D77C721E2A7031D000F56017 /* Finger.swift */,
+			);
+			path = HandPose;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,8 +159,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D77C72132A702F3200F56017 /* LaunchScreen.storyboard in Resources */,
+				D77C72212A70329B00F56017 /* Assets.xcassets in Resources */,
 				D77499C32A7027340004D8B0 /* Preview Assets.xcassets in Resources */,
-				D77499C02A7027340004D8B0 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,7 +172,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D77C721B2A70306E00F56017 /* CameraPreview.swift in Sources */,
 				D77499BE2A7027330004D8B0 /* ContentView.swift in Sources */,
+				D77C72192A70300300F56017 /* CameraViewController.swift in Sources */,
+				D77C721D2A70309600F56017 /* CameraView.swift in Sources */,
+				D77C72112A702DC100F56017 /* FingersOverlay.swift in Sources */,
+				D77C721F2A7031D000F56017 /* Finger.swift in Sources */,
 				D77499BC2A7027330004D8B0 /* EmittsApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,6 +310,7 @@
 				DEVELOPMENT_TEAM = QM86JXKQ8W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This application uses the camera to track fingers and hand poses in real time.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -299,6 +340,7 @@
 				DEVELOPMENT_TEAM = QM86JXKQ8W;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This application uses the camera to track fingers and hand poses in real time.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

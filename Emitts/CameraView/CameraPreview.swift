@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  CameraPreview.swift
 //  Emitts
 //
 //  Created by Joel Lewis on 25/07/2023.
@@ -37,30 +37,15 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import SwiftUI
+import UIKit
+import AVFoundation
 
-struct ContentView: View {
-    @State private var overlayPoints: [CGPoint] = []
-    
-    var body: some View {
-      ZStack(alignment: .top) {
-        CameraView { points in
-          overlayPoints = points
-        }
-        .overlay(
-          FingersOverlay(with: overlayPoints)
-            .foregroundColor(.pink)
-        )
-        .edgesIgnoringSafeArea(.all)
-        
-        Text("Hand action to go here")
-          .font(.largeTitle)
-      }
-    }
-}
+final class CameraPreview: UIView {
+  override class var layerClass: AnyClass {
+    AVCaptureVideoPreviewLayer.self
+  }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  var previewLayer: AVCaptureVideoPreviewLayer {
+    layer as! AVCaptureVideoPreviewLayer
+  }
 }

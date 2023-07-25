@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  FingersOverlay.swift
 //  Emitts
 //
 //  Created by Joel Lewis on 25/07/2023.
@@ -39,28 +39,26 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    @State private var overlayPoints: [CGPoint] = []
-    
-    var body: some View {
-      ZStack(alignment: .top) {
-        CameraView { points in
-          overlayPoints = points
-        }
-        .overlay(
-          FingersOverlay(with: overlayPoints)
-            .foregroundColor(.pink)
-        )
-        .edgesIgnoringSafeArea(.all)
-        
-        Text("Hand action to go here")
-          .font(.largeTitle)
-      }
+struct FingersOverlay: Shape {
+  let points: [CGPoint]
+  private let pointsPath = UIBezierPath()
+
+  init(with points: [CGPoint]) {
+    self.points = points
+  }
+
+  func path(in rect: CGRect) -> Path {
+    for point in points {
+      pointsPath.move(to: point)
+      pointsPath.addArc(withCenter: point, radius: 5, startAngle: 0, endAngle: 2 * .pi, clockwise: true)
     }
+
+    return Path(pointsPath.cgPath)
+  }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+struct FingersOverlay_Previews: PreviewProvider {
+  static var previews: some View {
+    FingersOverlay(with: [CGPoint(x: 0, y: 100), CGPoint(x: 100, y: 100), CGPoint(x: 100, y: 0)])
+  }
 }

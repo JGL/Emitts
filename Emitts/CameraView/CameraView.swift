@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  CameraView.swift
 //  Emitts
 //
 //  Created by Joel Lewis on 25/07/2023.
@@ -39,28 +39,18 @@
 
 import SwiftUI
 
-struct ContentView: View {
-    @State private var overlayPoints: [CGPoint] = []
-    
-    var body: some View {
-      ZStack(alignment: .top) {
-        CameraView { points in
-          overlayPoints = points
-        }
-        .overlay(
-          FingersOverlay(with: overlayPoints)
-            .foregroundColor(.pink)
-        )
-        .edgesIgnoringSafeArea(.all)
-        
-        Text("Hand action to go here")
-          .font(.largeTitle)
-      }
-    }
-}
+struct CameraView: UIViewControllerRepresentable {
+  var pointsProcessor: ((_ points: [CGPoint]) -> Void)?
+  
+  func makeUIViewController(context: Context) -> CameraViewController {
+    let cameraViewController = CameraViewController()
+    cameraViewController.pointsProcessor = pointsProcessor
+    return cameraViewController
+  }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  func updateUIViewController(
+    _ uiViewController: CameraViewController,
+    context: Context
+  ) {
+  }
 }
