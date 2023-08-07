@@ -17,6 +17,7 @@
 		D77C721D2A70309600F56017 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77C721C2A70309600F56017 /* CameraView.swift */; };
 		D77C721F2A7031D000F56017 /* Finger.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77C721E2A7031D000F56017 /* Finger.swift */; };
 		D77C72212A70329B00F56017 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D77C72202A70329B00F56017 /* Assets.xcassets */; };
+		D79195992A8114D000E378A0 /* SupinationAndBackground.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = D79195982A8114D000E378A0 /* SupinationAndBackground.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		D77C721C2A70309600F56017 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		D77C721E2A7031D000F56017 /* Finger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Finger.swift; sourceTree = "<group>"; };
 		D77C72202A70329B00F56017 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D79195982A8114D000E378A0 /* SupinationAndBackground.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SupinationAndBackground.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +71,7 @@
 				D77C72162A702FBB00F56017 /* CameraView */,
 				D77C72172A702FC400F56017 /* HandPose */,
 				D77C72122A702F3200F56017 /* LaunchScreen.storyboard */,
+				D79195982A8114D000E378A0 /* SupinationAndBackground.mlmodel */,
 				D77C72202A70329B00F56017 /* Assets.xcassets */,
 				D77499C12A7027340004D8B0 /* Preview Content */,
 			);
@@ -176,6 +179,7 @@
 				D77499BE2A7027330004D8B0 /* ContentView.swift in Sources */,
 				D77C72192A70300300F56017 /* CameraViewController.swift in Sources */,
 				D77C721D2A70309600F56017 /* CameraView.swift in Sources */,
+				D79195992A8114D000E378A0 /* SupinationAndBackground.mlmodel in Sources */,
 				D77C72112A702DC100F56017 /* FingersOverlay.swift in Sources */,
 				D77C721F2A7031D000F56017 /* Finger.swift in Sources */,
 				D77499BC2A7027330004D8B0 /* EmittsApp.swift in Sources */,
