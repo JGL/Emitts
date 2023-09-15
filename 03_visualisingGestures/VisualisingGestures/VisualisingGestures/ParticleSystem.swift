@@ -11,8 +11,12 @@ class ParticleSystem{
     var particles = Set<Particle>()
     var centre = UnitPoint.center
     
+    func getParticlesFiltered(by handAction: HandAction) -> Set<Particle>{
+        return particles.filter { $0.handAction == handAction}
+    }
+    
     func update(date: TimeInterval, currentHandAction: HandAction){
-        let deathDate = date - 1
+        let deathDate = date - 10 //10 second later than now
         
         for particle in particles {
             if particle.creationDate < deathDate{
