@@ -58,8 +58,6 @@ struct HandActionView: View {
                 let bigHalfCircleSize = halfCircleSize * bigSizeMuliplier
                 //context.blendMode = .plusLighter
                 //context.addFilter(.colorMultiply(.green))
-                var handDeviationPath = Path()
-                var firstHandDeviationEncountered = false
                 
                 for particle in particleSystem.particles{
                     let xPos = particle.x
@@ -86,15 +84,15 @@ struct HandActionView: View {
                         //                                    Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfCircleSize, y: yPos-halfCircleSize), size: CGSize(width: circleSize, height: circleSize))),
                         //                                    with: .color(particle.handAction.colour))
                         //context.stroke(Path().addLine(to: CGPoint(x: xPos, y: yPos)), with: .color(particle.handAction.colour), lineWidth: 5)
-                        let currentPoint = CGPoint(x: xPos, y: yPos)
-                        if(firstHandDeviationEncountered){
-                            handDeviationPath.move(to: currentPoint)
-                            handDeviationPath.addLine(to: currentPoint)
-                            firstHandDeviationEncountered = false
-                        }else{
-                            handDeviationPath.addLine(to: currentPoint)
-                        }
-                        //START HERE!
+//                        let currentPoint = CGPoint(x: xPos, y: yPos)
+//                        if(firstHandDeviationEncountered){
+//                            handDeviationPath.move(to: currentPoint)
+////                            handDeviationPath.addLine(to: currentPoint)
+//                            firstHandDeviationEncountered = false
+//                        }else{
+//                            handDeviationPath.addLine(to: currentPoint)
+//                        }
+                        continue
                     case .superNationProNation:
                         //spirals going up
                         context.fill(
@@ -119,10 +117,40 @@ struct HandActionView: View {
                 }
                 
                 //now draw the part we've built up
-                context.stroke(
-                    handDeviationPath,
-                    with: .color(HandAction.handDeviation.colour),
-                    lineWidth: 3.0)
+//                context.stroke(
+//                    handDeviationPath,
+//                    with: .color(HandAction.handDeviation.colour),
+//                    lineWidth: 3.0)
+                //doing the line drawings for the Wave Hand action in one place
+                var handDeviationPath = Path()
+                let justHandDeviationParticles = particleSystem.getParticlesFiltered(by: HandAction.handDeviation)
+                
+                if(!justHandDeviationParticles.isEmpty){
+                    //this is safe because it's not empty
+                    let startPosition = CGPoint(x: justHandDeviationParticles.first!.x, y: justHandDeviationParticles.first!.y)
+                    var nextPosition = startPosition
+                    
+                    var numberOfHandDeviationParticles = justHandDeviationParticles.count
+                    
+                    var lines = [CGPoint]()
+                    
+                    if(numberOfHandDeviationParticles > 2){
+                        //then we can make at least a line...
+                        handDeviationPath.move(to: startPosition)
+                        
+                        for i in 1..<numberOfHandDeviationParticles{
+                            nextPosition = CGPoint(x:justHandDeviationParticles[i].x, y:justHandDeviationParticles[i].y)
+                            lines.append(nextPosition)
+                        }
+                        
+                        handDeviationPath.addLines(lines)
+                        
+                        context.stroke(
+                            handDeviationPath,
+                            with: .color(HandAction.handDeviation.colour),
+                            lineWidth: 3.0)
+                    }
+                }
             }
         }
         .gesture(
