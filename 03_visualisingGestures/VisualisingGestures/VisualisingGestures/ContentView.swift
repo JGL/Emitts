@@ -45,12 +45,74 @@ struct HandActionView: View {
     @Binding var selectedHandAction: HandAction
     @State private var particleSystem = ParticleSystem()
     
+    func drawHandDeviationLine(context: GraphicsContext){
+        //doing the line drawings for the Wave Hand action in one place
+        var handDeviationPath = Path()
+        let justHandDeviationParticles = particleSystem.getParticlesFiltered(by: HandAction.handDeviation)
+        
+        if(!justHandDeviationParticles.isEmpty){
+            //this is safe because it's not empty
+            let startPosition = CGPoint(x: justHandDeviationParticles.first!.x, y: justHandDeviationParticles.first!.y)
+            var nextPosition = startPosition
+            
+            let numberOfHandDeviationParticles = justHandDeviationParticles.count
+            
+            var lines = [CGPoint]()
+            
+            if(numberOfHandDeviationParticles > 2){
+                //then we can make at least a line...
+                handDeviationPath.move(to: startPosition)
+                
+                for i in 1..<numberOfHandDeviationParticles{
+                    nextPosition = CGPoint(x:justHandDeviationParticles[i].x, y:justHandDeviationParticles[i].y)
+                    lines.append(nextPosition)
+                }
+                
+                handDeviationPath.addLines(lines)
+                
+                context.stroke(
+                    handDeviationPath,
+                    with: .color(HandAction.handDeviation.colour),
+                    lineWidth: 5.0)
+            }
+        }
+    }
+    
+    func drawSuperNationProNationSpiral(context: GraphicsContext, position: CGPoint){
+        //thanks ChatGPT! It made the standard spiral and I distorted it in y
+        
+        var spiralPath = Path()
+        
+        let turns: Int = 3
+        let distancePerTurn: CGFloat = 0.1
+        
+        for i in 0..<turns * 360 {
+            let angle = Double(i) * .pi / 180
+            let x = position.x + CGFloat(i) * cos(angle) * distancePerTurn
+            let y = position.y - CGFloat(i)/5.0 + (CGFloat(i) * sin(angle) * distancePerTurn)
+            
+            let point = CGPoint(x: x, y: y)
+            
+            if i == 0 {
+                spiralPath.move(to: point)
+            } else {
+                spiralPath.addLine(to: point)
+            }
+        }
+        
+        context.stroke(
+            spiralPath,
+            with: .color(HandAction.superNationProNation.colour),
+            lineWidth: 12.0)
+    }
+    
     var body: some View{
         TimelineView(.animation){ timeline in
             Canvas { context, size in
                 //drawing code here
                 let timelineDate = timeline.date.timeIntervalSinceReferenceDate
                 particleSystem.update(date: timelineDate, currentHandAction: selectedHandAction)
+                
                 let circleSize = 0.05*size.width
                 let halfCircleSize = circleSize/2.0
                 let bigSizeMuliplier = 4.0
@@ -79,25 +141,11 @@ struct HandActionView: View {
                             Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfCircleSize, y: yPos-halfCircleSize), size: CGSize(width: circleSize, height: circleSize))),
                             with: .color(particle.handAction.colour))
                     case .handDeviation:
-                        //paths
-                        //                                context.fill(
-                        //                                    Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfCircleSize, y: yPos-halfCircleSize), size: CGSize(width: circleSize, height: circleSize))),
-                        //                                    with: .color(particle.handAction.colour))
-                        //context.stroke(Path().addLine(to: CGPoint(x: xPos, y: yPos)), with: .color(particle.handAction.colour), lineWidth: 5)
-//                        let currentPoint = CGPoint(x: xPos, y: yPos)
-//                        if(firstHandDeviationEncountered){
-//                            handDeviationPath.move(to: currentPoint)
-////                            handDeviationPath.addLine(to: currentPoint)
-//                            firstHandDeviationEncountered = false
-//                        }else{
-//                            handDeviationPath.addLine(to: currentPoint)
-//                        }
+                        //path drawing, so all happening in one go below...
                         continue
                     case .superNationProNation:
                         //spirals going up
-                        context.fill(
-                            Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfCircleSize, y: yPos-halfCircleSize), size: CGSize(width: circleSize, height: circleSize))),
-                            with: .color(particle.handAction.colour))
+                        drawSuperNationProNationSpiral(context: context, position: CGPoint(x: xPos, y: yPos))
                     case .flexionExtension:
                         //balls going up that fall and disappear
                         context.fill(
@@ -116,41 +164,8 @@ struct HandActionView: View {
                     }
                 }
                 
-                //now draw the part we've built up
-//                context.stroke(
-//                    handDeviationPath,
-//                    with: .color(HandAction.handDeviation.colour),
-//                    lineWidth: 3.0)
-                //doing the line drawings for the Wave Hand action in one place
-                var handDeviationPath = Path()
-                let justHandDeviationParticles = particleSystem.getParticlesFiltered(by: HandAction.handDeviation)
-                
-                if(!justHandDeviationParticles.isEmpty){
-                    //this is safe because it's not empty
-                    let startPosition = CGPoint(x: justHandDeviationParticles.first!.x, y: justHandDeviationParticles.first!.y)
-                    var nextPosition = startPosition
-                    
-                    var numberOfHandDeviationParticles = justHandDeviationParticles.count
-                    
-                    var lines = [CGPoint]()
-                    
-                    if(numberOfHandDeviationParticles > 2){
-                        //then we can make at least a line...
-                        handDeviationPath.move(to: startPosition)
-                        
-                        for i in 1..<numberOfHandDeviationParticles{
-                            nextPosition = CGPoint(x:justHandDeviationParticles[i].x, y:justHandDeviationParticles[i].y)
-                            lines.append(nextPosition)
-                        }
-                        
-                        handDeviationPath.addLines(lines)
-                        
-                        context.stroke(
-                            handDeviationPath,
-                            with: .color(HandAction.handDeviation.colour),
-                            lineWidth: 3.0)
-                    }
-                }
+                //drawing the Hand Deviation aka Wave graphic - a set of continuous lines
+                drawHandDeviationLine(context: context)
             }
         }
         .gesture(
@@ -165,6 +180,7 @@ struct HandActionView: View {
                     particleSystem.centre.y = drag.location.y
                 }
         )
+        //make sure it's transparent so the background colour and other things show through from below
         .background(.clear)
     }
 }
