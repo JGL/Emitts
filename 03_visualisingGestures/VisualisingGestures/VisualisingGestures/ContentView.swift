@@ -78,18 +78,26 @@ struct HandActionView: View {
         }
     }
     
-    func drawSuperNationProNationSpiral(context: GraphicsContext, position: CGPoint){
+    func drawSuperNationProNationSpiral(context: GraphicsContext, particle: Particle, size: CGSize, date: TimeInterval){
         //thanks ChatGPT! It made the standard spiral and I distorted it in y
         
         var spiralPath = Path()
+        let timeInSecondsSinceBirth = date - particle.creationDate
+        //5 seconds to animate offscreen
+        let timeToAnimateOffScreen:Double = 5
+        let ratioOfMovement = timeInSecondsSinceBirth/timeToAnimateOffScreen
+        let heightOfCanvas = size.height
+        let animationOffset = ratioOfMovement*heightOfCanvas
         
         let turns: Int = 3
         let distancePerTurn: CGFloat = 0.1
         
         for i in 0..<turns * 360 {
             let angle = Double(i) * .pi / 180
-            let x = position.x + CGFloat(i) * cos(angle) * distancePerTurn
-            let y = position.y - CGFloat(i)/5.0 + (CGFloat(i) * sin(angle) * distancePerTurn)
+            let x = particle.x + CGFloat(i) * cos(angle) * distancePerTurn
+            //distortInYAmount is the stretch of the spiral vertically
+            let distortInYAmount = CGFloat(i)/5.0
+            let y = -animationOffset + (particle.y - distortInYAmount + (CGFloat(i) * sin(angle) * distancePerTurn))
             
             let point = CGPoint(x: x, y: y)
             
@@ -133,7 +141,6 @@ struct HandActionView: View {
                     //                            with: .color(.green),
                     //                            lineWidth: 4)
                     
-                    
                     switch particle.handAction {
                     case .none:
                         //https://developer.apple.com/documentation/swiftui/graphicscontext
@@ -145,7 +152,7 @@ struct HandActionView: View {
                         continue
                     case .superNationProNation:
                         //spirals going up
-                        drawSuperNationProNationSpiral(context: context, position: CGPoint(x: xPos, y: yPos))
+                        drawSuperNationProNationSpiral(context: context, particle: particle, size: size, date: timelineDate)
                     case .flexionExtension:
                         //balls going up that fall and disappear
                         context.fill(
