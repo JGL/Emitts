@@ -18,13 +18,16 @@ class ParticleSystem{
         return particles.filter { $0.handAction == handAction}
     }
     
-    func update(date: TimeInterval, currentHandAction: HandAction){
+    func update(date: TimeInterval){
         let deathDate = date - 10 //10 seconds later than now
         
         //https://stackoverflow.com/questions/35101099/how-do-i-safely-remove-items-from-an-array-in-a-for-loop
         let aliveParticles = particles.filter{$0.creationDate > deathDate}
         particles = aliveParticles
         
+    }
+    
+    func add(date: TimeInterval, currentHandAction: HandAction){
         let newParticle = Particle(x: centre.x, y: centre.y, handAction: currentHandAction)
         particles.append(newParticle)
     }

@@ -78,13 +78,65 @@ struct HandActionView: View {
         }
     }
     
+    func drawElbowDeviationLine(context: GraphicsContext){
+        //doing the line drawings for the Wave Hand action in one place
+        var elbowDeviationPath = Path()
+        let justElbowDeviationParticles = particleSystem.getParticlesFiltered(by: HandAction.elbowDeviation)
+        
+        if(!justElbowDeviationParticles.isEmpty){
+            //this is safe because it's not empty
+            let startPosition = CGPoint(x: justElbowDeviationParticles.first!.x, y: justElbowDeviationParticles.first!.y)
+            var nextPosition = startPosition
+            
+            let numberOfElbowDeviationParticles = justElbowDeviationParticles.count
+            
+            var lines = [CGPoint]()
+            
+            if(numberOfElbowDeviationParticles > 2){
+                //then we can make at least a line...
+                elbowDeviationPath.move(to: startPosition)
+                
+                for i in 1..<numberOfElbowDeviationParticles{
+                    nextPosition = CGPoint(x:justElbowDeviationParticles[i].x, y:justElbowDeviationParticles[i].y)
+                    lines.append(nextPosition)
+                }
+                
+                elbowDeviationPath.addLines(lines)
+                
+                context.stroke(
+                    elbowDeviationPath,
+                    with: .color(HandAction.elbowDeviation.colour),
+                    lineWidth: 20.0)
+            }
+        }
+    }
+    
+    func drawFlexionExtensionBall(context: GraphicsContext, particle: Particle, size: CGSize, date: TimeInterval){
+        
+        let timeInSecondsSinceBirth = date - particle.creationDate
+        //5 seconds to animate offscreen
+        let timeToAnimateOffScreen:Double = 4.2
+        let ballSize:Double = 42
+        let ratioOfMovement = timeInSecondsSinceBirth/timeToAnimateOffScreen
+        let heightOfCanvas = size.height
+        let animationOffset = ratioOfMovement*heightOfCanvas
+        let newY = particle.y - animationOffset
+        
+        //https://developer.apple.com/documentation/swiftui/graphicscontext
+        let ballPath = Path(ellipseIn: CGRect(origin: CGPoint(x: particle.x, y: newY), size: CGSize(width: ballSize, height: ballSize)))
+        
+        context.fill(
+            ballPath,
+            with: .color(particle.handAction.colour))
+    }
+    
     func drawSuperNationProNationSpiral(context: GraphicsContext, particle: Particle, size: CGSize, date: TimeInterval){
         //thanks ChatGPT! It made the standard spiral and I distorted it in y
         
         var spiralPath = Path()
         let timeInSecondsSinceBirth = date - particle.creationDate
         //5 seconds to animate offscreen
-        let timeToAnimateOffScreen:Double = 5
+        let timeToAnimateOffScreen:Double = 4.2*2
         let ratioOfMovement = timeInSecondsSinceBirth/timeToAnimateOffScreen
         let heightOfCanvas = size.height
         let animationOffset = ratioOfMovement*heightOfCanvas
@@ -110,7 +162,7 @@ struct HandActionView: View {
         
         context.stroke(
             spiralPath,
-            with: .color(HandAction.superNationProNation.colour),
+            with: .color(particle.handAction.colour),
             lineWidth: 12.0)
     }
     
@@ -119,13 +171,13 @@ struct HandActionView: View {
             Canvas { context, size in
                 //drawing code here
                 let timelineDate = timeline.date.timeIntervalSinceReferenceDate
-                particleSystem.update(date: timelineDate, currentHandAction: selectedHandAction)
+                particleSystem.update(date: timelineDate)
                 
                 let circleSize = 0.05*size.width
                 let halfCircleSize = circleSize/2.0
                 let bigSizeMuliplier = 4.0
-                let bigCircleSize = circleSize * bigSizeMuliplier
-                let bigHalfCircleSize = halfCircleSize * bigSizeMuliplier
+                let bigCircleSize = circleSize*bigSizeMuliplier
+                let halfBigCircleSize = bigCircleSize/2.0
                 //context.blendMode = .plusLighter
                 //context.addFilter(.colorMultiply(.green))
                 
@@ -154,25 +206,24 @@ struct HandActionView: View {
                         //spirals going up
                         drawSuperNationProNationSpiral(context: context, particle: particle, size: size, date: timelineDate)
                     case .flexionExtension:
-                        //balls going up that fall and disappear
-                        context.fill(
-                            Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfCircleSize, y: yPos-halfCircleSize), size: CGSize(width: circleSize, height: circleSize))),
-                            with: .color(particle.handAction.colour))
+                        //balls going up (TODO: that fall and disappear)
+                        drawFlexionExtensionBall(context: context, particle: particle, size: size, date: timelineDate)
                     case .oppositional:
                         //thumb dot gets massive
                         context.fill(
-                            Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfCircleSize, y: yPos-halfCircleSize), size: CGSize(width: circleSize, height: circleSize))),
+                            Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfBigCircleSize, y: yPos-halfBigCircleSize), size: CGSize(width: bigCircleSize, height: bigCircleSize))),
                             with: .color(particle.handAction.colour))
                     case .elbowDeviation:
                         //fatter paths / bigger dots (TODO: this may not be poassible to track with hand actions alone)
-                        context.fill(
-                            Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-bigHalfCircleSize, y: yPos-bigHalfCircleSize), size: CGSize(width: bigCircleSize, height: bigCircleSize))),
-                            with: .color(particle.handAction.colour))
+                        //bigger path drawing, so all happening in one go below...
+                        continue
                     }
                 }
                 
                 //drawing the Hand Deviation aka Wave graphic - a set of continuous lines
                 drawHandDeviationLine(context: context)
+                //drawing the Elbow Deviation aka Elbow Wave graphic - a set of bigger continuous lines
+                drawElbowDeviationLine(context: context)
             }
         }
         .gesture(
@@ -185,6 +236,9 @@ struct HandActionView: View {
                     //                            particleSystem.centre.y = drag.location.y / UIScreen.main.bounds.height
                     particleSystem.centre.x = drag.location.x
                     particleSystem.centre.y = drag.location.y
+                    
+                    let now = Date().timeIntervalSinceReferenceDate
+                    particleSystem.add(date:now, currentHandAction: selectedHandAction)
                 }
         )
         //make sure it's transparent so the background colour and other things show through from below
