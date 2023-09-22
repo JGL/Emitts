@@ -107,8 +107,8 @@ class Coordinator: NSObject, ARSessionDelegate {
             //let reversedQueue = queue.reversed()
             
             queueSamplingCounter += 1
-            if reversedQueue.count == queueSize && queueSamplingCounter % queueSamplingCount == 0 {
-                let poses = MLMultiArray(concatenating: Array(reversedQueue), axis: 0, dataType: .float32)
+            if queue.count == queueSize && queueSamplingCounter % queueSamplingCount == 0 {
+                let poses = MLMultiArray(concatenating: queue, axis: 0, dataType: .float32)
                 let prediction = try? handActionModel.prediction(poses: poses)
                 guard let label = prediction?.label,
                       let confidence = prediction?.labelProbabilities[label] else {
