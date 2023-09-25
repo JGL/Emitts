@@ -67,7 +67,7 @@ class ARViewModel: UIViewController, ObservableObject, ARSessionDelegate {
         
         frameCount += 1
         
-        if frameCount % 3 == 0 { // This division prevents the ARSession from lagging too much
+        if frameCount % 2 == 0 { // 30 frames a second, rather than 60
             
             let hands: [MLMultiArray] = getHands(frame: frame)
             
