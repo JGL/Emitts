@@ -91,6 +91,7 @@ class Coordinator: NSObject, ARSessionDelegate {
         //print("Got a hand!")
         
         frameCounter += 1
+        //only try every two frames so we are running at 30fps not 60fps which matches our model and training data
         if frameCounter % 2 == 0 {
             let pose = handObservation
             do {
