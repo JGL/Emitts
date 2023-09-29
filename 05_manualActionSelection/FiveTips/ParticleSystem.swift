@@ -19,7 +19,7 @@ class ParticleSystem{
     }
     
     func update(date: TimeInterval){
-        let deathDate = date - 10 //10 seconds later than now
+        let deathDate = date - 3 //3 seconds later than now
         
         //https://stackoverflow.com/questions/35101099/how-do-i-safely-remove-items-from-an-array-in-a-for-loop
         let aliveParticles = particles.filter{$0.creationDate > deathDate}

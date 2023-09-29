@@ -17,6 +17,10 @@ struct ContentView : View {
     @State private var namedOverlayPoints: [VNHumanHandPoseObservation.JointName:CGPoint] = [.thumbTip: CGPoint(), .indexTip: CGPoint(), .middleTip: CGPoint(), .ringTip: CGPoint(), .littleTip: CGPoint()]
     
     @State private var thumbParticleSystem:ParticleSystem = ParticleSystem()
+    @State private var indexParticleSystem:ParticleSystem = ParticleSystem()
+    @State private var middleParticleSystem:ParticleSystem = ParticleSystem()
+    @State private var ringParticleSystem:ParticleSystem = ParticleSystem()
+    @State private var littleParticleSystem:ParticleSystem = ParticleSystem()
     
     var body: some View {
         VStack{
@@ -37,6 +41,50 @@ struct ContentView : View {
                                 thumbParticleSystem.add(date:now, currentHandAction: selectedHandAction)
                             }
                             thumbParticleSystem.update(date: now)
+                        }
+                    HandActionView(selectedHandAction: $selectedHandAction, particleSystem: $indexParticleSystem)
+                        .onChange(of: namedOverlayPoints){
+                            let now = Date().timeIntervalSinceReferenceDate
+                            if(namedOverlayPoints[.indexTip] != nil){
+                                indexParticleSystem.centre.x = namedOverlayPoints[.indexTip]!.x * geometry.size.width
+                                indexParticleSystem.centre.y = namedOverlayPoints[.indexTip]!.y * geometry.size.height
+                                
+                                indexParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                            }
+                            indexParticleSystem.update(date: now)
+                        }
+                    HandActionView(selectedHandAction: $selectedHandAction, particleSystem: $middleParticleSystem)
+                        .onChange(of: namedOverlayPoints){
+                            let now = Date().timeIntervalSinceReferenceDate
+                            if(namedOverlayPoints[.middleTip] != nil){
+                                middleParticleSystem.centre.x = namedOverlayPoints[.middleTip]!.x * geometry.size.width
+                                middleParticleSystem.centre.y = namedOverlayPoints[.middleTip]!.y * geometry.size.height
+                                
+                                middleParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                            }
+                            middleParticleSystem.update(date: now)
+                        }
+                    HandActionView(selectedHandAction: $selectedHandAction, particleSystem: $ringParticleSystem)
+                        .onChange(of: namedOverlayPoints){
+                            let now = Date().timeIntervalSinceReferenceDate
+                            if(namedOverlayPoints[.ringTip] != nil){
+                                ringParticleSystem.centre.x = namedOverlayPoints[.ringTip]!.x * geometry.size.width
+                                ringParticleSystem.centre.y = namedOverlayPoints[.ringTip]!.y * geometry.size.height
+                                
+                                ringParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                            }
+                            ringParticleSystem.update(date: now)
+                        }
+                    HandActionView(selectedHandAction: $selectedHandAction, particleSystem: $littleParticleSystem)
+                        .onChange(of: namedOverlayPoints){
+                            let now = Date().timeIntervalSinceReferenceDate
+                            if(namedOverlayPoints[.littleTip] != nil){
+                                littleParticleSystem.centre.x = namedOverlayPoints[.littleTip]!.x * geometry.size.width
+                                littleParticleSystem.centre.y = namedOverlayPoints[.littleTip]!.y * geometry.size.height
+                                
+                                littleParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                            }
+                            littleParticleSystem.update(date: now)
                         }
                 }
             }
@@ -116,8 +164,8 @@ class Coordinator: NSObject, ARSessionDelegate {
     }
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        let viewWidth = Int(view!.bounds.width)
-        let viewHeight = Int(view!.bounds.height)
+//        let viewWidth = Int(view!.bounds.width)
+//        let viewHeight = Int(view!.bounds.height)
         
         //code below via: "Classify hand poses and actions with Create ML" WWDC 2021 session
         //https://developer.apple.com/videos/play/wwdc2021/10039/
@@ -151,7 +199,7 @@ class Coordinator: NSObject, ARSessionDelegate {
                 let middleTipObservation = handLandmarks[.middleTip]
                 let ringTipObservation = handLandmarks[.ringTip]
                 let littleTipObservation = handLandmarks[.littleTip]
-
+                
                 //TODO: clean this up, must be a way of mapping this with a closure
                 if (thumbTipObservation != nil){
                     namedOverlayPoints[.thumbTip] = convertVNRecognizedPointToCGPoint(thumbTipObservation!)
@@ -209,7 +257,7 @@ class Coordinator: NSObject, ARSessionDelegate {
                         let poses = MLMultiArray(concatenating: queue, axis: 0, dataType: .float32)
                         let prediction = try? handActionModel.prediction(poses: poses)
                         guard let label = prediction?.label,
-                            let confidence = prediction?.labelProbabilities[label] else {
+                              let confidence = prediction?.labelProbabilities[label] else {
                             print("Couldn't get a label or a confidence, returning...")
                             return
                         }
