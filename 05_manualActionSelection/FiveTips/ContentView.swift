@@ -25,9 +25,8 @@ struct ContentView : View {
     var body: some View {
         VStack{
             ZStack(alignment: .top) {
-                Rectangle()
-                //https://www.hackingwithswift.com/quick-start/swiftui/how-to-load-custom-colors-from-an-asset-catalog
-                    .fill(Color("BackgroundColour"))
+//                Rectangle()         ////https://www.hackingwithswift.com/quick-start/swiftui/how-to-load-custom-colors-from-an-asset-catalog
+//                .fill(Color(.pink))
                 ARViewContainer(namedOverlayPoints: $namedOverlayPoints)
                 FingersView(namedOverlayPoints: $namedOverlayPoints)
                 GeometryReader { geometry in

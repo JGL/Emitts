@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 
+//https://www.hackingwithswift.com/quick-start/swiftui/how-to-load-custom-colors-from-an-asset-catalog
+
 //https://www.programiz.com/swift-programming/enum caseiterable is useful!
 enum HandAction: String, CaseIterable, Identifiable{
     case none //dots
@@ -22,17 +24,17 @@ enum HandAction: String, CaseIterable, Identifiable{
     var colour: Color {
         switch self {
         case .none:
-            return Color.green
-        case .handDeviation:
-            return Color.red
-        case .superNationProNation:
-            return Color.blue
-        case .flexionExtension:
-            return Color.purple
-        case .oppositional:
             return Color.pink
+        case .handDeviation:
+            return Color("Navy")
+        case .superNationProNation:
+            return Color("Violet")
+        case .flexionExtension:
+            return Color("White")
+        case .oppositional:
+            return Color("Peach")
         case .elbowDeviation:
-            return Color.white
+            return Color("Orange")
         }
     }
 }
