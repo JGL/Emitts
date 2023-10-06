@@ -26,15 +26,15 @@ enum HandAction: String, CaseIterable, Identifiable{
         case .none:
             return Color.pink
         case .handDeviation:
-            return Color("Navy")
+            return Color("EmittsNavy")
         case .superNationProNation:
-            return Color("Violet")
+            return Color("EmittsViolet")
         case .flexionExtension:
-            return Color("White")
+            return Color("EmittsWhite")
         case .oppositional:
-            return Color("Peach")
+            return Color("EmittsPeach")
         case .elbowDeviation:
-            return Color("Orange")
+            return Color("EmittsOrange")
         }
     }
 }

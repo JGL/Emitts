@@ -77,7 +77,7 @@ struct HandActionView: View {
                 context.stroke(
                     elbowDeviationPath,
                     with: .color(HandAction.elbowDeviation.colour),
-                    lineWidth: 20.0)
+                    lineWidth: 10.0)
             }
         }
     }
@@ -87,7 +87,7 @@ struct HandActionView: View {
         let timeInSecondsSinceBirth = date - particle.creationDate
         //5 seconds to animate offscreen
         let timeToAnimateOffScreen:Double = 4.2
-        let ballSize:Double = 42
+        let ballSize:Double = 21
         let ratioOfMovement = timeInSecondsSinceBirth/timeToAnimateOffScreen
         let heightOfCanvas = size.height
         let animationOffset = ratioOfMovement*heightOfCanvas
@@ -134,7 +134,7 @@ struct HandActionView: View {
         context.stroke(
             spiralPath,
             with: .color(particle.handAction.colour),
-            lineWidth: 12.0)
+            lineWidth: 6.0)
     }
     
     var body: some View{
@@ -144,20 +144,26 @@ struct HandActionView: View {
                 let timelineDate = timeline.date.timeIntervalSinceReferenceDate
                 particleSystem.update(date: timelineDate)
                 
-                let circleSize = 0.05*size.width
-                let halfCircleSize = circleSize/2.0
-                let bigSizeMuliplier = 4.0
-                let bigCircleSize = circleSize*bigSizeMuliplier
-                let halfBigCircleSize = bigCircleSize/2.0
-                //context.blendMode = .plusLighter
+                let noneCircleSize = 0.05*size.width
+                let halfNoneCircleSize = noneCircleSize/2.0
+                let oppositionalSizeMuliplier = 2.0
+                let oppositionalCircleSize = noneCircleSize*oppositionalSizeMuliplier
+                let halfOppositionalCircleSize = oppositionalCircleSize/2.0
+                //https://developer.apple.com/documentation/swiftui/graphicscontext/opacity
+                //to fade everything:
+                //context.opacity = 0.84
+                //https://developer.apple.com/documentation/swiftui/graphicscontext/blendmode-swift.struct
+                //context.blendMode = .darken
                 //context.addFilter(.colorMultiply(.green))
+                //blurry!
+                //context.addFilter(.blur(radius: 2.0))
                 
                 for particle in particleSystem.particles{
                     let xPos = particle.x
                     let yPos = particle.y
                     
                     //fading everything at the moment
-                    //context.opacity = 1 - (timelineDate-particle.creationDate)
+                    context.opacity = 1.0 - (timelineDate-particle.creationDate)
                     //https://developer.apple.com/documentation/swiftui/canvas
                     //                    context.stroke(
                     //                        Path(ellipseIn: CGRect(origin: CGPoint(x: xPos, y: yPos), size: CGSize(width: 10.0, height: 10.0))),
@@ -168,7 +174,7 @@ struct HandActionView: View {
                     case .none:
                         //https://developer.apple.com/documentation/swiftui/graphicscontext
                         context.fill(
-                            Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfCircleSize, y: yPos-halfCircleSize), size: CGSize(width: circleSize, height: circleSize))),
+                            Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfNoneCircleSize, y: yPos-halfNoneCircleSize), size: CGSize(width: noneCircleSize, height: noneCircleSize))),
                             with: .color(particle.handAction.colour))
                     case .handDeviation:
                         //path drawing, so all happening in one go below...
@@ -180,10 +186,17 @@ struct HandActionView: View {
                         //balls going up (TODO: that fall and disappear)
                         drawFlexionExtensionBall(context: context, particle: particle, size: size, date: timelineDate)
                     case .oppositional:
-                        //thumb dot gets massive
-                        context.fill(
-                            Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfBigCircleSize, y: yPos-halfBigCircleSize), size: CGSize(width: bigCircleSize, height: bigCircleSize))),
+                        if(particle.tipType == .thumbTip){
+                            //thumb dot gets massive
+                            context.fill(Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfOppositionalCircleSize, y: yPos-halfOppositionalCircleSize), size: CGSize(width: oppositionalCircleSize, height: oppositionalCircleSize))),
                             with: .color(particle.handAction.colour))
+                        }else{
+                            //other dots "normal" size
+                            context.fill(
+                                Path(ellipseIn: CGRect(origin: CGPoint(x: xPos-halfNoneCircleSize, y: yPos-halfNoneCircleSize), size: CGSize(width: noneCircleSize, height: noneCircleSize))),
+                                with: .color(particle.handAction.colour))
+                        }
+                    
                     case .elbowDeviation:
                         //fatter paths / bigger dots (TODO: this may not be poassible to track with hand actions alone)
                         //bigger path drawing, so all happening in one go below...

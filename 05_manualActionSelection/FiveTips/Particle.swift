@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import Vision
 
 struct Particle: Hashable {
     let x: Double
     let y: Double
     let creationDate = Date.now.timeIntervalSinceReferenceDate
     let handAction: HandAction
+    let tipType: VNHumanHandPoseObservation.JointName
 }

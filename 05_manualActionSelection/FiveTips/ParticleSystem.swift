@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Vision
 
 class ParticleSystem{
     //this was a set, but now it's an array because I care about order, so that the drawing looks correct
@@ -27,8 +28,8 @@ class ParticleSystem{
         
     }
     
-    func add(date: TimeInterval, currentHandAction: HandAction){
-        let newParticle = Particle(x: centre.x, y: centre.y, handAction: currentHandAction)
+    func add(date: TimeInterval, currentHandAction: HandAction, currentTipType: VNHumanHandPoseObservation.JointName){
+        let newParticle = Particle(x: centre.x, y: centre.y, handAction: currentHandAction, tipType: currentTipType)
         particles.append(newParticle)
     }
 }

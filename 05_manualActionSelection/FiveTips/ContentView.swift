@@ -28,7 +28,8 @@ struct ContentView : View {
 //                Rectangle()         ////https://www.hackingwithswift.com/quick-start/swiftui/how-to-load-custom-colors-from-an-asset-catalog
 //                .fill(Color(.pink))
                 ARViewContainer(namedOverlayPoints: $namedOverlayPoints)
-                FingersView(namedOverlayPoints: $namedOverlayPoints)
+                //removing the fingers view for performance's sake
+//                FingersView(namedOverlayPoints: $namedOverlayPoints)
                 GeometryReader { geometry in
                     HandActionView(selectedHandAction: $selectedHandAction, particleSystem: $thumbParticleSystem)
                         .onChange(of: namedOverlayPoints){
@@ -37,7 +38,7 @@ struct ContentView : View {
                                 thumbParticleSystem.centre.x = namedOverlayPoints[.thumbTip]!.x * geometry.size.width
                                 thumbParticleSystem.centre.y = namedOverlayPoints[.thumbTip]!.y * geometry.size.height
                                 
-                                thumbParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                                thumbParticleSystem.add(date:now, currentHandAction: selectedHandAction, currentTipType: .thumbTip)
                             }
                             thumbParticleSystem.update(date: now)
                         }
@@ -48,7 +49,7 @@ struct ContentView : View {
                                 indexParticleSystem.centre.x = namedOverlayPoints[.indexTip]!.x * geometry.size.width
                                 indexParticleSystem.centre.y = namedOverlayPoints[.indexTip]!.y * geometry.size.height
                                 
-                                indexParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                                indexParticleSystem.add(date:now, currentHandAction: selectedHandAction, currentTipType: .indexTip)
                             }
                             indexParticleSystem.update(date: now)
                         }
@@ -59,7 +60,7 @@ struct ContentView : View {
                                 middleParticleSystem.centre.x = namedOverlayPoints[.middleTip]!.x * geometry.size.width
                                 middleParticleSystem.centre.y = namedOverlayPoints[.middleTip]!.y * geometry.size.height
                                 
-                                middleParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                                middleParticleSystem.add(date:now, currentHandAction: selectedHandAction, currentTipType: .middleTip)
                             }
                             middleParticleSystem.update(date: now)
                         }
@@ -70,7 +71,7 @@ struct ContentView : View {
                                 ringParticleSystem.centre.x = namedOverlayPoints[.ringTip]!.x * geometry.size.width
                                 ringParticleSystem.centre.y = namedOverlayPoints[.ringTip]!.y * geometry.size.height
                                 
-                                ringParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                                ringParticleSystem.add(date:now, currentHandAction: selectedHandAction, currentTipType: .ringTip)
                             }
                             ringParticleSystem.update(date: now)
                         }
@@ -81,7 +82,7 @@ struct ContentView : View {
                                 littleParticleSystem.centre.x = namedOverlayPoints[.littleTip]!.x * geometry.size.width
                                 littleParticleSystem.centre.y = namedOverlayPoints[.littleTip]!.y * geometry.size.height
                                 
-                                littleParticleSystem.add(date:now, currentHandAction: selectedHandAction)
+                                littleParticleSystem.add(date:now, currentHandAction: selectedHandAction, currentTipType: .littleTip)
                             }
                             littleParticleSystem.update(date: now)
                         }
@@ -139,14 +140,16 @@ class Coordinator: NSObject, ARSessionDelegate {
     @Binding private var namedOverlayPoints:[VNHumanHandPoseObservation.JointName:CGPoint]
     
     weak var view: ARView?
-    var queue = [MLMultiArray]()
-    var queueSamplingCounter = 0
-    let queueSize = 60 //that's the prediction window size from the .mlmodel file
-    let queueSamplingCount = 1 //10 //try to work out the action every 10 frames, as soon as the queue is full, guessed this value
-    var frameCounter = 0
-    
-    let handActionModel = try! EmittsSupinationAndBackground_1(configuration: MLModelConfiguration())
-    
+    //removing handaction recognition until we have it working reliably
+//    var queue = [MLMultiArray]()
+//    var queueSamplingCounter = 0
+//    let queueSize = 60 //that's the prediction window size from the .mlmodel file
+//    let queueSamplingCount = 1 //10 //try to work out the action every 10 frames, as soon as the queue is full, guessed this value
+//    var frameCounter = 0
+
+    //removing handaction recognition until we have it working reliably
+//    let handActionModel = try! EmittsSupinationAndBackground_1(configuration: MLModelConfiguration())
+   
     //https://www.swiftbysundell.com/tips/importing-interactive-uikit-views-into-swiftui
     init(namedOverlayPoints: Binding<[VNHumanHandPoseObservation.JointName:CGPoint]>){
         _namedOverlayPoints = namedOverlayPoints
@@ -235,35 +238,36 @@ class Coordinator: NSObject, ARSessionDelegate {
                 //pass the points at this point!
                 //overlayPoints = convertedPoints
                 
-                frameCounter += 1
-                //only try every two frames so we are running at 30fps not 60fps which matches our model and training data
-                if frameCounter % 2 == 0 {
-                    do {
-                        let oneFrameMultiArray = try observation.keypointsMultiArray()
-                        queue.append(oneFrameMultiArray)
-                        //print("Appended to queue!")
-                    } catch {
-                        print("Couldn't add the keypoints to the queue")
-                        print(error.localizedDescription)
-                    }
-                    
-                    queue = Array(queue.suffix(queueSize))
-                    //geppy thinks it's the reversed queue that is wrong, the order of frames I'm feeding it
-                    //let reversedQueue = queue.reversed()
-                    
-                    queueSamplingCounter += 1
-                    if queue.count == queueSize && queueSamplingCounter % queueSamplingCount == 0 {
-                        let poses = MLMultiArray(concatenating: queue, axis: 0, dataType: .float32)
-                        let prediction = try? handActionModel.prediction(poses: poses)
-                        guard let label = prediction?.label,
-                              let confidence = prediction?.labelProbabilities[label] else {
-                            print("Couldn't get a label or a confidence, returning...")
-                            return
-                        }
-                        //print("\(frameCounter): the label is:\(label) with confidence: \(confidence)")
-                    }
-                    
-                }
+                //removing all hand action recognition for performance, until we have a reliable way of detecting them
+//                frameCounter += 1
+//                //only try every two frames so we are running at 30fps not 60fps which matches our model and training data
+//                if frameCounter % 2 == 0 {
+//                    do {
+//                        let oneFrameMultiArray = try observation.keypointsMultiArray()
+//                        queue.append(oneFrameMultiArray)
+//                        //print("Appended to queue!")
+//                    } catch {
+//                        print("Couldn't add the keypoints to the queue")
+//                        print(error.localizedDescription)
+//                    }
+//                    
+//                    queue = Array(queue.suffix(queueSize))
+//                    //geppy thinks it's the reversed queue that is wrong, the order of frames I'm feeding it
+//                    //let reversedQueue = queue.reversed()
+//                    
+//                    queueSamplingCounter += 1
+//                    if queue.count == queueSize && queueSamplingCounter % queueSamplingCount == 0 {
+//                        let poses = MLMultiArray(concatenating: queue, axis: 0, dataType: .float32)
+//                        let prediction = try? handActionModel.prediction(poses: poses)
+//                        guard let label = prediction?.label,
+//                              let confidence = prediction?.labelProbabilities[label] else {
+//                            print("Couldn't get a label or a confidence, returning...")
+//                            return
+//                        }
+//                        //print("\(frameCounter): the label is:\(label) with confidence: \(confidence)")
+//                    }
+//                    
+//                }
             }
         } catch {
             assertionFailure("handPoseRequest failed: \(error.localizedDescription)")
