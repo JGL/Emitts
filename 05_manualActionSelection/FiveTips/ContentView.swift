@@ -140,15 +140,13 @@ class Coordinator: NSObject, ARSessionDelegate {
     @Binding private var namedOverlayPoints:[VNHumanHandPoseObservation.JointName:CGPoint]
     
     weak var view: ARView?
-    //removing handaction recognition until we have it working reliably
-//    var queue = [MLMultiArray]()
-//    var queueSamplingCounter = 0
-//    let queueSize = 60 //that's the prediction window size from the .mlmodel file
-//    let queueSamplingCount = 1 //10 //try to work out the action every 10 frames, as soon as the queue is full, guessed this value
-//    var frameCounter = 0
+    var queue = [MLMultiArray]()
+    var queueSamplingCounter = 0
+    let queueSize = 60 //that's the prediction window size from the .mlmodel file
+    let queueSamplingCount = 1 //10 //try to work out the action every 10 frames, as soon as the queue is full, guessed this value
+    var frameCounter = 0
 
-    //removing handaction recognition until we have it working reliably
-//    let handActionModel = try! EmittsSupinationAndBackground_1(configuration: MLModelConfiguration())
+    let handActionModel = try! EmittsSupinationAndBackground_1(configuration: MLModelConfiguration())
    
     //https://www.swiftbysundell.com/tips/importing-interactive-uikit-views-into-swiftui
     init(namedOverlayPoints: Binding<[VNHumanHandPoseObservation.JointName:CGPoint]>){
@@ -159,7 +157,8 @@ class Coordinator: NSObject, ARSessionDelegate {
         //swap them!
         //https://stackoverflow.com/questions/64759383/bounding-box-from-vndetectrectanglerequest-is-not-correct-size-when-used-as-chil/66054211#66054211
         //https://stackoverflow.com/questions/68280813/convert-points-from-vision-coordinates-to-uikit-coordinates-in-vndetecthumanhand
-        return CGPoint(x: pointToConvert.location.y, y: pointToConvert.location.x)
+        //return CGPoint(x: pointToConvert.location.y, y: pointToConvert.location.x)
+        return CGPoint(x: pointToConvert.location.x, y: 1.0-pointToConvert.location.y)
         //can't use the below as we are using ARKit for capture, not AVCapture
         //TODO: go back to using AVController for capture?
         //return cameraPreview.previewLayer.layerPointConverted(fromCaptureDevicePoint: cgPoint)
@@ -176,7 +175,12 @@ class Coordinator: NSObject, ARSessionDelegate {
         handPoseRequest.maximumHandCount = 1
         handPoseRequest.revision = VNDetectHumanHandPoseRequestRevision1
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+        //let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+        //thanks to Greg Chiste of  Developer Technical Support for the below bug fix!
+        //the image needs an orientation!
+        let image = CIImage(cvPixelBuffer: pixelBuffer)
+        let rotatedImage = image.oriented(.right)
+        let handler = VNImageRequestHandler(ciImage: rotatedImage)
         
         do {
             try handler.perform([handPoseRequest])
@@ -238,36 +242,35 @@ class Coordinator: NSObject, ARSessionDelegate {
                 //pass the points at this point!
                 //overlayPoints = convertedPoints
                 
-                //removing all hand action recognition for performance, until we have a reliable way of detecting them
-//                frameCounter += 1
-//                //only try every two frames so we are running at 30fps not 60fps which matches our model and training data
-//                if frameCounter % 2 == 0 {
-//                    do {
-//                        let oneFrameMultiArray = try observation.keypointsMultiArray()
-//                        queue.append(oneFrameMultiArray)
-//                        //print("Appended to queue!")
-//                    } catch {
-//                        print("Couldn't add the keypoints to the queue")
-//                        print(error.localizedDescription)
-//                    }
-//                    
-//                    queue = Array(queue.suffix(queueSize))
-//                    //geppy thinks it's the reversed queue that is wrong, the order of frames I'm feeding it
-//                    //let reversedQueue = queue.reversed()
-//                    
-//                    queueSamplingCounter += 1
-//                    if queue.count == queueSize && queueSamplingCounter % queueSamplingCount == 0 {
-//                        let poses = MLMultiArray(concatenating: queue, axis: 0, dataType: .float32)
-//                        let prediction = try? handActionModel.prediction(poses: poses)
-//                        guard let label = prediction?.label,
-//                              let confidence = prediction?.labelProbabilities[label] else {
-//                            print("Couldn't get a label or a confidence, returning...")
-//                            return
-//                        }
-//                        //print("\(frameCounter): the label is:\(label) with confidence: \(confidence)")
-//                    }
-//                    
-//                }
+                frameCounter += 1
+                //only try every two frames so we are running at 30fps not 60fps which matches our model and training data
+                if frameCounter % 2 == 0 {
+                    do {
+                        let oneFrameMultiArray = try observation.keypointsMultiArray()
+                        queue.append(oneFrameMultiArray)
+                        //print("Appended to queue!")
+                    } catch {
+                        print("Couldn't add the keypoints to the queue")
+                        print(error.localizedDescription)
+                    }
+                    
+                    queue = Array(queue.suffix(queueSize))
+                    //geppy thinks it's the reversed queue that is wrong, the order of frames I'm feeding it
+                    //let reversedQueue = queue.reversed()
+                    
+                    queueSamplingCounter += 1
+                    if queue.count == queueSize && queueSamplingCounter % queueSamplingCount == 0 {
+                        let poses = MLMultiArray(concatenating: queue, axis: 0, dataType: .float32)
+                        let prediction = try? handActionModel.prediction(poses: poses)
+                        guard let label = prediction?.label,
+                              let confidence = prediction?.labelProbabilities[label] else {
+                            print("Couldn't get a label or a confidence, returning...")
+                            return
+                        }
+                        print("\(frameCounter): the label is:\(label) with confidence: \(confidence)")
+                    }
+                    
+                }
             }
         } catch {
             assertionFailure("handPoseRequest failed: \(error.localizedDescription)")

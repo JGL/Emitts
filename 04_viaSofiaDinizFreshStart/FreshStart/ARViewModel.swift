@@ -41,7 +41,12 @@ class ARViewModel: UIViewController, ObservableObject, ARSessionDelegate {
         handPoseRequest.maximumHandCount = 1
         handPoseRequest.revision = VNDetectHumanHandPoseRequestRevision1
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+        //let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+        //thanks to Greg Chiste of  Developer Technical Support for the below bug fix!
+        //the image needs an orientation!
+        let image = CIImage(cvPixelBuffer: pixelBuffer)
+        let rotatedImage = image.oriented(.right)
+        let handler = VNImageRequestHandler(ciImage: rotatedImage)
         
         do {
             try handler.perform([handPoseRequest])
