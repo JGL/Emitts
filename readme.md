@@ -2,12 +2,13 @@
 
 This project is part of the [Making Movement Irresistable project](http://makingmovementirresistible.org) - "Making Movement Irresistible (MMI) is a research project funded by Arts Council of Wales, National Lottery Health & Wellbeing award. The overarching aim is to develop an innovative suite of digital, online and wearable accessories that encourage improvisational movement interactions with older adults in a variety of residential settings."
 
-This repository currently contains four different Xcode projects:
+This repository currently contains five different Xcode projects:
 
 1. 01_viaKodecoExampleCode
-2.  02_viaAppleExampleCode
-3.  03_visualisingGestures
+2. 02_viaAppleExampleCode
+3. 03_visualisingGestures
 4. 04_viaSofiaDinizFreshStart
+5. 05_manualActionSelection
 
 01_viaKodecoExampleCode is based on the following code:
 
@@ -22,3 +23,5 @@ The original raywenderlich.com source code was released on 2021/06/01 and is lic
 03_visualisingGestures was inspired by the Paul Hudson video: [SwiftUI Special Effects – TimelineView, Canvas, particles, and… AirPods?!"](https://www.youtube.com/watch?v=raR-hDgzoFg).
 
 04_viaSofiaDinizFreshStart was based around the [BabyChat released by Sofia Diniz](https://github.com/sofiadinizms/WWDC23).
+
+05_manualActionSelection is a combination of all of the above, made before the support of Greg Chiste at Apple Developer Technical Support, who bug fixed the Hand Action recognition.
