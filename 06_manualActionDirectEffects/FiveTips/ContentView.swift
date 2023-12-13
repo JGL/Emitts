@@ -270,10 +270,10 @@ class Coordinator: NSObject, ARSessionDelegate {
                         let prediction = try? handActionModel.prediction(poses: poses)
                         guard let label = prediction?.label,
                               let confidence = prediction?.labelProbabilities[label] else {
-                            print("Couldn't get a label or a confidence, returning...")
+                            //print("Couldn't get a label or a confidence, returning...")
                             return
                         }
-                        print("\(frameCounter): the label is:\(label) with confidence: \(confidence)")
+                        //print("\(frameCounter): the label is:\(label) with confidence: \(confidence)")
                     }
                     
                 }
